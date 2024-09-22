@@ -3,22 +3,29 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
-using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
+#include <vector>
+using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds ;
+using std::string, std::vector ,std::pair;
 
-bool isTemperatureCritical(float temperature) {
-  return temperature > 102 || temperature < 95;
+vector<string> vitalType = { "Temperature", "Pulse Rate", "SPO2" };
+
+vector<pair<float, float>> vitalLimits = {
+    {95, 102}, // Temperature
+    {60, 100}, // Pulse Rate
+    {90, 100}  // SPO2
+};
+
+bool isVitalsOutOfRange(float vitalValue, pair<float, float> vitalLimits)
+{
+    if (vitalValue < vitalLimits.first || vitalValue > vitalLimits.second)
+    {
+        return true;
+    }
+    return false;
 }
 
-bool isPulseRateOutOfRange(float pulseRate) {
-  return pulseRate < 60 || pulseRate > 100;
-}
-
-bool isSpo2OutOfRange(float spo2) {
-  return spo2 < 90;
-}
-
-void displayWarningMessage(const std::string& message) {
-  cout << message << "\n";
+void displayWarningMessage(string vitalType) {
+  cout << vitalType << " is out of range!\n";
   for (int i = 0; i < 6; i++) {
     cout << "\r* " << flush;
     sleep_for(seconds(1));
@@ -28,22 +35,12 @@ void displayWarningMessage(const std::string& message) {
 }
 
 int vitalsOk(float temperature, float pulseRate, float spo2) {
-  int result = 1;
-
-  if (isTemperatureCritical(temperature)) {
-    displayWarningMessage("Temperature is critical!");
-    result = 0;
-  }
-
-  if (result && isPulseRateOutOfRange(pulseRate)) {
-    displayWarningMessage("Pulse Rate is out of range!");
-    result = 0;
-  }
-
-  if (result && isSpo2OutOfRange(spo2)) {
-    displayWarningMessage("Oxygen Saturation out of range!");
-    result = 0;
-  }
-
-  return result;
+    vector<float> vitals = { temperature, pulseRate, spo2 };
+    for (int i = 0; i < vitalType.size(); i++) {
+        if (isVitalsOutOfRange(vitals[i], vitalLimits[i])) {
+            displayWarningMessage(vitalType[i]);
+            return 0;
+        }
+    }
+    return 1;
 }
