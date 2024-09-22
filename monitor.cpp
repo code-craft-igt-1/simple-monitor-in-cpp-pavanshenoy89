@@ -7,22 +7,27 @@
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 using std::string, std::vector, std::pair;
 
-vector<string> vitalType = { "Temperature", "Pulse Rate", "SPO2" };
-
-vector<pair<float, float>> vitalLimits = {
-    {95, 102},  // Temperature
-    {60, 100},  // Pulse Rate
-    {90, 100}   // SPO2
+struct VitalData {
+    string vitalType;
+    float lowerLimit;
+    float upperLimit;
+    float tolerance;
 };
 
-bool isVitalsOutOfRange(float vitalValue, pair<float, float> vitalLimits) {
-    if (vitalValue < vitalLimits.first || vitalValue > vitalLimits.second) {
+vector<VitalData> m_vitalParameters = {
+    {"Temperature", 95, 102, 1.5},
+    {"Pulse Rate", 60, 100, 1.5},
+    {"SPO2", 90, 100, 1.5}
+};
+
+bool isVitalsOutOfRange(const VitalData& vital, float vitalValue) {
+    if (vitalValue < vital.lowerLimit || vitalValue > vital.upperLimit) {
         return true;
     }
     return false;
 }
 
-void displayWarningMessage(const string& vitalType) {
+void displayAlertMessage(const string& vitalType) {
     cout << vitalType << " is out of range!\n";
     for (int i = 0; i < 6; i++) {
         cout << "\r* " << flush;
@@ -33,10 +38,10 @@ void displayWarningMessage(const string& vitalType) {
 }
 
 int vitalsOk(float temperature, float pulseRate, float spo2) {
-    vector<float> vitals = { temperature, pulseRate, spo2 };
-    for (int i = 0; i < vitalType.size(); i++) {
-        if (isVitalsOutOfRange(vitals[i], vitalLimits[i])) {
-            displayWarningMessage(vitalType[i]);
+    vector<float> vitalValues = {temperature, pulseRate, spo2};
+    for (int i = 0; i < m_vitalParameters.size(); i++) {
+        if (isVitalsOutOfRange(m_vitalParameters[i], vitalValues[i])) {
+            displayAlertMessage(m_vitalParameters[i].vitalType);
             return 0;
         }
     }
