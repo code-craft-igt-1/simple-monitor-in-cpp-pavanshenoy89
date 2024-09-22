@@ -15,8 +15,8 @@ vector<pair<float, float>> vitalLimits = {
     {90, 100}   // SPO2
 };
 
-bool isVitalsOutOfRange(float vitalValue, pair<float, float> vitalLimits){
-    if (vitalValue < vitalLimits.first || vitalValue > vitalLimits.second){
+bool isVitalsOutOfRange(float vitalValue, pair<float, float> vitalLimits) {
+    if (vitalValue < vitalLimits.first || vitalValue > vitalLimits.second) {
         return true;
     }
     return false;
