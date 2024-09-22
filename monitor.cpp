@@ -28,15 +28,22 @@ void displayWarningMessage(const std::string& message) {
 }
 
 int vitalsOk(float temperature, float pulseRate, float spo2) {
+  int result = 1;
+  
   if (isTemperatureCritical(temperature)) {
     displayWarningMessage("Temperature is critical!");
-    return 0;
-  } else if (isPulseRateOutOfRange(pulseRate)) {
-    displayWarningMessage("Pulse Rate is out of range!");
-    return 0;
-  } else if (isSpo2OutOfRange(spo2)) {
-    displayWarningMessage("Oxygen Saturation out of range!");
-    return 0;
+    result = 0;
   }
-  return 1;
+  
+  if (result && isPulseRateOutOfRange(pulseRate)) {
+    displayWarningMessage("Pulse Rate is out of range!");
+    result = 0;
+  }
+  
+  if (result && isSpo2OutOfRange(spo2)) {
+    displayWarningMessage("Oxygen Saturation out of range!");
+    result = 0;
+  }
+  
+  return result;
 }
